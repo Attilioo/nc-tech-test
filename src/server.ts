@@ -2,11 +2,13 @@ import * as express from "express";
 
 export const app = express();
 
+const { getAllCards } = require("./controllers/cards.controller");
+
 app.set("json spaces", 2);
 
-app.get("/cards", async () => {
+app.get("/cards", async (req, res) => {
   // respond with a list of cards
-  console.log("success");
+  await getAllCards(req, res);
 });
 
 app.get("/cards/:cardId/:sizeId?", () => {
