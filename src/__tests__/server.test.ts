@@ -1,7 +1,7 @@
 import * as request from "supertest";
 import { app } from "../server";
 
-describe("Test /cards", () => {
+describe("GET Test /cards", () => {
   test("GET:200 sends an array of cards", async () => {
     const response = await request(app).get("/cards").expect(200);
 
@@ -14,8 +14,8 @@ describe("Test /cards", () => {
   });
 });
 
-describe("Test /cards/:cardId", () => {
-  test("returns a single card with the correct properties", async () => {
+describe("GET Test /cards/:cardId", () => {
+  test("GET: 200 returns a single card with the correct properties", async () => {
     const response = await request(app).get("/cards/card001").expect(200);
 
     expect(response.body.id).toBe("card001");
@@ -26,7 +26,7 @@ describe("Test /cards/:cardId", () => {
     expect(response.body.imageUrl).toBe("/front-cover-portrait-1.jpg");
   });
 
-  test("returns a  404 status and error message for a non-existent id", async () => {
+  test("GET: 404 returns a  404 status and error message for a non-existent id", async () => {
     const response = await request(app)
       .get("/cards/non_existent_id")
       .expect(404);
@@ -35,13 +35,45 @@ describe("Test /cards/:cardId", () => {
   });
 });
 
-// test("returns matching card title", async () => {
-//   const response = await request(app).get("/cards/card001");
+describe("POST Test /cards", () => {
+  test("POST:  201 inserts a new card", async () => {
+    const newCard = {
+      title: "Example Title",
+      sizes: ["sm", "md", "gt"],
+      basePrice: 200,
+      pages: [
+        {
+          title: "Front Cover",
+          templateId: "template001",
+        },
+        {
+          title: "Inside Left",
+          templateId: "template002",
+        },
+        {
+          title: "Inside Right",
+          templateId: "template003",
+        },
+        {
+          title: "Back Cover",
+          templateId: "template004",
+        },
+      ],
+    };
 
-//   expect(response.status).toBe(200);
-//   expect(response.body).toEqual(
-//     expect.objectContaining({
-//       title: "card 1 title",
-//     })
-//   );
-// });
+    const expectedCard = {
+      ...newCard,
+      id: "card004",
+    };
+
+    const response = await request(app)
+      .post("/cards")
+      .send(newCard)
+      .expect(201);
+
+    expect(response.body.id).toBe(expectedCard.id);
+    expect(response.body.title).toBe(expectedCard.title);
+    expect(response.body.basePrice).toBe(expectedCard.basePrice);
+    expect(response.body.pages).toEqual(expectedCard.pages);
+  });
+});

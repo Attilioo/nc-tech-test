@@ -1,4 +1,8 @@
-const { selectCards, selectCardById } = require("../models/cards.models");
+const {
+  selectCards,
+  selectCardById,
+  insertCard,
+} = require("../models/cards.models");
 
 exports.getAllCards = async (req, res) => {
   try {
@@ -18,5 +22,15 @@ exports.getCardById = async (req, res) => {
     res.status(200).send(chosenCard);
   } catch (err) {
     res.status(404).send({ message: "Card not found." });
+  }
+};
+
+exports.postCard = async (req, res) => {
+  const newCard = req.body;
+  try {
+    const addedCard = await insertCard(newCard);
+    res.status(201).send(addedCard);
+  } catch (err) {
+    res.status(400).send({ message: "Bad Request" });
   }
 };

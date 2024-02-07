@@ -74,3 +74,27 @@ exports.selectCardById = async (cardId) => {
 
   return card;
 };
+
+exports.insertCard = async (card) => {
+  let newCard = card;
+  const cardsData = await fs.readFile(
+    path.join(__dirname, "/../data/cards.json"),
+    "utf-8"
+  );
+
+  const cards = JSON.parse(cardsData);
+
+  let nextCardId = cards.length + 1;
+  let formattedCardId = String(nextCardId).padStart(3, "0");
+
+  newCard.id = `card${formattedCardId}`;
+
+  cards.push(card);
+
+  await fs.writeFile(
+    path.join(__dirname, "/../data/cards.json"),
+    JSON.stringify(cards),
+    "utf-8"
+  );
+  return newCard;
+};
